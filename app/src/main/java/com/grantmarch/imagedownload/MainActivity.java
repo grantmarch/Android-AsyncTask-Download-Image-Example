@@ -2,6 +2,7 @@ package com.grantmarch.imagedownload;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -67,7 +71,23 @@ public class MainActivity extends AppCompatActivity {
                 URLConnection urlConnection = url.openConnection();
                 urlConnection.connect();
                 file_length = urlConnection.getContentLength();
-                Log.i("Grant: length", Integer.toString(file_length));
+
+                //////
+                File new_folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "prebeeshrk");
+                if (!new_folder.exists()) {
+                    if (new_folder.mkdir()) {
+                        Log.i("Grant", "Folder succesfully created");
+                    } else {
+                        Log.i("Grant", "Failed to create folder");
+                    }
+                } else {
+                    Log.i("Grant", "Folder already exists");
+                }
+
+                //////
+                File output_file = new File(new_folder, "downloaded_image.jpg");
+                OutputStream outputStream = new FileOutputStream(output_file);
+
                 InputStream inputStream = new BufferedInputStream(url.openStream(), 8192);
                 byte [] data = new byte[1024];
                 int total = 0;
@@ -76,11 +96,19 @@ public class MainActivity extends AppCompatActivity {
                     total += count;
                     //Log.i("Grant", "Count: " + Integer.toString(count));
                     //Log.i("Grant", "Total: " + Integer.toString(total));
+
+                    //////
+                    outputStream.write(data, 0, count);
+
                     int progress = 100 * total / file_length;
                     Log.i("Grant", "Progress: " + Integer.toString(progress));
                     publishProgress(progress);
                 }
                 inputStream.close();
+
+                //////
+                outputStream.close();
+
                 Log.i("Grant", "file_length: " + Integer.toString(file_length));
 
             } catch (MalformedURLException e) {
