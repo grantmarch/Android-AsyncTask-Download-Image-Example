@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void downloadImage(View view) {
 
-        Log.i("Grant", "Button pressed");
+        Log.i("Info", "Button pressed");
 
         DownloadTask downloadTask = new DownloadTask();
         downloadTask.execute(image_url);
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             String path = params[0];
             int file_length;
 
-            Log.i("Grant: path", path);
+            Log.i("Info: path", path);
             try {
                 URL url = new URL(path);
                 URLConnection urlConnection = url.openConnection();
@@ -76,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
                 File new_folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "prebeeshrk");
                 if (!new_folder.exists()) {
                     if (new_folder.mkdir()) {
-                        Log.i("Grant", "Folder succesfully created");
+                        Log.i("Info", "Folder succesfully created");
                     } else {
-                        Log.i("Grant", "Failed to create folder");
+                        Log.i("Info", "Failed to create folder");
                     }
                 } else {
-                    Log.i("Grant", "Folder already exists");
+                    Log.i("Info", "Folder already exists");
                 }
 
                 //////
@@ -94,14 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 int count;
                 while ((count = inputStream.read(data)) != -1) {
                     total += count;
-                    //Log.i("Grant", "Count: " + Integer.toString(count));
-                    //Log.i("Grant", "Total: " + Integer.toString(total));
+                    //Log.i("Info", "Count: " + Integer.toString(count));
+                    //Log.i("Info", "Total: " + Integer.toString(total));
 
                     //////
                     outputStream.write(data, 0, count);
 
                     int progress = 100 * total / file_length;
-                    Log.i("Grant", "Progress: " + Integer.toString(progress));
+                    Log.i("Info", "Progress: " + Integer.toString(progress));
                     publishProgress(progress);
                 }
                 inputStream.close();
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 //////
                 outputStream.close();
 
-                Log.i("Grant", "file_length: " + Integer.toString(file_length));
+                Log.i("Info", "file_length: " + Integer.toString(file_length));
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
