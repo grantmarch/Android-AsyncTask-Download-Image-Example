@@ -1,6 +1,12 @@
+/**
+ * This code is based on the YouTube video https://www.youtube.com/watch?v=5Bo-ESPkpxI in
+ * Prabeesh R K's channel "Android Studio Tutorial - 67 - Download Image Using AsyncTask"
+ *
+ */
 package com.grantmarch.imagedownload;
 
 import android.app.ProgressDialog;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         ProgressDialog progressDialog;
 
+        /**
+         * Set up a ProgressDialog
+         */
         @Override
         protected void onPreExecute() {
             progressDialog = new ProgressDialog(MainActivity.this);
@@ -60,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        /**
+         *  Background task
+         */
         @Override
         protected String doInBackground(String... params) {
             String path = params[0];
@@ -72,8 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 urlConnection.connect();
                 file_length = urlConnection.getContentLength();
 
-                //////
-                File new_folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "prebeeshrk");
+                /**
+                 * Create a folder
+                 */
+                File new_folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "myfolder");
                 if (!new_folder.exists()) {
                     if (new_folder.mkdir()) {
                         Log.i("Info", "Folder succesfully created");
@@ -84,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Info", "Folder already exists");
                 }
 
-                //////
+                /**
+                 * Create an output file to store the image for download
+                 */
                 File output_file = new File(new_folder, "downloaded_image.jpg");
                 OutputStream outputStream = new FileOutputStream(output_file);
 
@@ -94,19 +110,14 @@ public class MainActivity extends AppCompatActivity {
                 int count;
                 while ((count = inputStream.read(data)) != -1) {
                     total += count;
-                    //Log.i("Info", "Count: " + Integer.toString(count));
-                    //Log.i("Info", "Total: " + Integer.toString(total));
 
-                    //////
                     outputStream.write(data, 0, count);
-
                     int progress = 100 * total / file_length;
-                    Log.i("Info", "Progress: " + Integer.toString(progress));
                     publishProgress(progress);
+
+                    Log.i("Info", "Progress: " + Integer.toString(progress));
                 }
                 inputStream.close();
-
-                //////
                 outputStream.close();
 
                 Log.i("Info", "file_length: " + Integer.toString(file_length));
@@ -128,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             progressDialog.hide();
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "myfolder");
+            File output_file = new File(folder, "downloaded_image.jpg");
+            String path = output_file.toString();
+            imageView.setImageDrawable(Drawable.createFromPath(path));
+            Log.i("Info", "Path: " + path);
         }
     }
 
